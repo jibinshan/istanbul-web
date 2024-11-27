@@ -151,7 +151,7 @@ const TimeForm: FC<TimeFormProps> = ({ mainform, setpage }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex flex-col items-center justify-center"
+          className="w-full flex flex-col items-center justify-center gap-2"
         >
           <div className="grid w-full grid-cols-1 gap-6 border-b-[2px] border-b-gray-900 py-12 md:grid-cols-2 lg:grid-cols-3">
             <FormField
@@ -218,52 +218,58 @@ const TimeForm: FC<TimeFormProps> = ({ mainform, setpage }) => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="time"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Time</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-12 border-muted bg-transparent">
-                        <SelectValue
-                          placeholder={
-                            form.watch("time") ? form.watch("time") : "Select time"
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="max-h-[300px]">
-                      {generateTimeSlots().map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {form.watch('date') ?
+              <FormField
+                control={form.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Time</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-12 border-muted bg-transparent">
+                          <SelectValue
+                            placeholder={
+                              form.watch("time") ? form.watch("time") : "Select time"
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[300px]">
+                        {generateTimeSlots().map((time) => (
+                          <SelectItem key={time} value={time}>
+                            {time}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              :
+              <div></div>
+            }
           </div>
-          <div className="flex w-full flex-col gap-4 py-12">
-            <p>Choose an available time slot:</p>
-            <div className="custom-scrollbar grid h-[250px] grid-cols-2 gap-6 overflow-y-scroll md:grid-cols-4 lg:grid-cols-5">
-              {generateTimeSlots().map((time) => (
-                <div
-                  key={time}
-                  onClick={() => form.setValue("time", time)}
-                  className={cn(
-                    "flex h-full w-full cursor-pointer items-center justify-center border-[1px] border-gray-800 py-4",
-                    form.watch("time") === time && "border-primary",
-                  )}
-                >
-                  {time}
-                </div>
-              ))}
+          {form.watch('date') &&
+            <div className="flex w-full flex-col gap-4 py-12">
+              <p>Choose an available time slot:</p>
+              <div className="custom-scrollbar grid h-[250px] grid-cols-2 gap-6 overflow-y-scroll md:grid-cols-4 lg:grid-cols-5">
+                {generateTimeSlots().map((time) => (
+                  <div
+                    key={time}
+                    onClick={() => form.setValue("time", time)}
+                    className={cn(
+                      "flex h-full w-full cursor-pointer items-center justify-center border-[1px] border-gray-800 py-4",
+                      form.watch("time") === time && "border-primary",
+                    )}
+                  >
+                    {time}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          }
           <Button
             className="w-fit px-6 py-6"
             disabled={disable}

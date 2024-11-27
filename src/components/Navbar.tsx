@@ -42,7 +42,7 @@ const Navbar = ({
       <div className="flex w-full max-w-[1300px] flex-col items-center gap-2">
         <div
           className={cn(
-            "mb-2 flex w-full justify-between md:border-b border-white/30 md:py-2",
+            "mb-2 flex w-full justify-between border-white/30 md:border-b md:py-2",
             (isScrolled || pathname !== "/") && "hidden",
           )}
         >
@@ -127,7 +127,7 @@ const Navbar = ({
             </Button> */}
           </div>
           <div className="hidden items-center justify-center gap-[2.5rem] md:flex">
-            {pathname !== "/" && (
+            {BetaMenuActive && (
               <CartSheet>
                 <Button
                   variant="ghost"
