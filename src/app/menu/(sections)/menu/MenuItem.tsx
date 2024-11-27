@@ -8,6 +8,7 @@ import { formattedItemPrice } from "@/lib/formatted-item-price";
 import { getCurrencySymbol } from "@/lib/get-currency-symbol";
 import { getMenuItemById } from "@/lib/get-menu-item-by-id";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import Image from "next/image";
 import type { FC } from "react";
 

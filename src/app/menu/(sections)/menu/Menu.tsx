@@ -24,7 +24,7 @@ const Menu = () => {
   // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
   const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // const [existCategory, setExistCategory] = useState<string[]>([])
+  const [existCategory, setExistCategory] = useState<string[]>([])
 
   const handleScrollToCategory = (categoryId: string) => {
     const categoryElement = document.getElementById(categoryId);
@@ -85,26 +85,62 @@ const Menu = () => {
 
   const lastCategory = sortedMenu?.[sortedMenu.length - 1];
   const lastCategoryItemsCount = lastCategory?.items.length ?? 0;
-  // useEffect(() => {
-  //   const updatedCategories: string[] = [];
 
-  //   sortedMenu?.forEach((data) => {
-  //     const categoryexist = data.items.find(
-  //       (Item) =>
-  //       // Item?.extras?.availability?.days.includes(
-  //       //   format(Date.now(), "EEEE").toLowerCase()
-  //       // ) &&
-  //       (Item?.extras?.menuItemOrderType === "both" ||
-  //         Item?.extras?.menuItemOrderType === "takeaway")
-  //     )?._idCategory;
+  useEffect(() => {
+    const updatedCategories: string[] = [];
+    sortedMenu?.forEach((data) => {
 
-  //     if (categoryexist && !updatedCategories.includes(categoryexist)) {
-  //       updatedCategories.push(categoryexist);
-  //     }
-  //   });
+      if (data?.items?.find((item) => item.extras)?.extras?.availability?.days && data?.items?.find((item) => item.extras)?.extras?.menuItemOrderType) {
+        const categoryexist = data.items.find(
+          (Item) =>
 
-  //   setExistCategory(updatedCategories);
-  // }, [sortedMenu]);
+            Item?.extras?.availability?.days.includes(
+              format(Date.now(), "EEEE").toLowerCase()
+            )
+            &&
+            (Item?.extras?.menuItemOrderType === "both" ||
+              Item?.extras?.menuItemOrderType === "takeaway")
+        )?._idCategory;
+
+        if (categoryexist && !updatedCategories.includes(categoryexist)) {
+          updatedCategories.push(categoryexist);
+        }
+      } else if (data?.items?.find((item) => item.extras)?.extras?.availability?.days) {
+        const categoryexist = data.items.find(
+          (Item) =>
+
+            Item?.extras?.availability?.days.includes(
+              format(Date.now(), "EEEE").toLowerCase()
+            )
+        )?._idCategory;
+        if (categoryexist && !updatedCategories.includes(categoryexist)) {
+          updatedCategories.push(categoryexist);
+        }
+      } else if (data?.items?.find((item) => item.extras)?.extras?.menuItemOrderType) {
+        const categoryexist = data.items.find(
+          (Item) =>
+
+          (Item?.extras?.menuItemOrderType === "both" ||
+            Item?.extras?.menuItemOrderType === "takeaway")
+        )?._idCategory;
+
+        if (categoryexist && !updatedCategories.includes(categoryexist)) {
+          updatedCategories.push(categoryexist);
+        }
+      } else {
+        const categoryexist = data.items.find(
+          (Item) =>
+            Item
+        )?._idCategory;
+
+        if (categoryexist && !updatedCategories.includes(categoryexist)) {
+          updatedCategories.push(categoryexist);
+        }
+      }
+    });
+
+    setExistCategory(updatedCategories);
+  }, [sortedMenu]);
   return (
     <section className="flex h-full w-full items-center justify-center">
       <div className="flex h-full w-full max-w-[1300px] flex-col gap-4 px-2 py-[2.5rem] pb-28 md:gap-[2rem]">
@@ -144,7 +180,7 @@ const Menu = () => {
                     "w-fit border-b-2 border-b-transparent bg-primary px-6 py-4 font-semibold transition-all duration-300 ease-in-out md:bg-transparent",
                     currentCategory === item._id &&
                     "bg-[#02264E] md:border-b-primary",
-                    // existCategory.find((categoryid) => categoryid === item._id) !== item._id && "w-0 border-0 px-0 py-0 hidden"
+                    existCategory.find((categoryid) => categoryid === item._id) !== item._id && "w-0 border-0 px-0 py-0 hidden"
                   )}
                   onClick={() => handleScrollToCategory(item._id)}
                 >
@@ -165,8 +201,8 @@ const Menu = () => {
                 id={data._id}
                 className={cn(
                   "mt-6 flex w-full flex-col gap-2 lg:mt-0"
-                  // ,
-                  // data._id !== existCategory.find((categoryid) => categoryid === data._id) && "hidden mt-0 w-0 gap-0"
+                  ,
+                  data._id !== existCategory.find((categoryid) => categoryid === data._id) && "hidden mt-0 w-0 gap-0"
                 )}
               >
                 <h1
@@ -175,33 +211,53 @@ const Menu = () => {
                     data._id === currentCategory &&
                     "sticky top-[150px] z-40 w-full bg-[#070707] py-3 lg:static lg:top-0",
                     "font-sans text-xl font-bold tracking-[0.00938em]",
-                    // data._id !== existCategory.find((categoryid) => categoryid === data._id) && "w-0 h-0 p-0 tracking-[0px]"
+                    data._id !== existCategory.find((categoryid) => categoryid === data._id) && "w-0 h-0 p-0 tracking-[0px]"
                   )}
                 >
                   {
-                    // data._id === existCategory.find((categoryid) => categoryid === data._id) &&
+                    data._id === existCategory.find((categoryid) => categoryid === data._id) &&
                     data.categoryName
                   }
                 </h1>
                 <div className="hidden h-full w-full grid-cols-1 gap-4 md:grid lg:grid-cols-2">
                   {data.items.map((item) => {
                     if (
-                      // item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase()) &&
+                      item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase()) &&
                       (item.extras?.menuItemOrderType === "both" || item.extras?.menuItemOrderType === "takeaway")) {
                       return <MenuItem key={item._id} id={item._id} />;
-                    } else {
+                    } else if (item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase())) {
                       return <MenuItem key={item._id} id={item._id} />;
+                    } else if ((item.extras?.menuItemOrderType === "both" || item.extras?.menuItemOrderType === "takeaway")) {
+                      return <MenuItem key={item._id} id={item._id} />;
+                    } else if (!item.extras?.menuItemOrderType) {
+                      return <MenuItem key={item._id} id={item._id} />;
+                    } else if (!item.extras?.availability?.days) {
+                      return <MenuItem key={item._id} id={item._id} />;
+                    } else if (!item.extras?.menuItemOrderType && !item.extras?.availability?.days) {
+                      return <MenuItem key={item._id} id={item._id} />;
+                    } else {
+                      return null;
                     }
                   })}
                 </div>
                 <div className="grid h-full w-full grid-cols-1 gap-4 md:hidden lg:grid-cols-2">
                   {data.items.map((item) => {
                     if (
-                      // item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase()) &&
+                      item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase()) &&
                       (item.extras?.menuItemOrderType === "both" || item.extras?.menuItemOrderType === "takeaway")) {
                       return <MenuItemMobile key={item._id} id={item._id} />;
-                    } else {
+                    } else if (item.extras?.availability?.days.includes(format(Date.now(), "EEEE").toLowerCase())) {
                       return <MenuItemMobile key={item._id} id={item._id} />;
+                    } else if ((item.extras?.menuItemOrderType === "both" || item.extras?.menuItemOrderType === "takeaway")) {
+                      return <MenuItemMobile key={item._id} id={item._id} />;
+                    } else if (!item.extras?.menuItemOrderType) {
+                      return <MenuItemMobile key={item._id} id={item._id} />;
+                    } else if (!item.extras?.availability?.days) {
+                      return <MenuItemMobile key={item._id} id={item._id} />;
+                    } else if (!item.extras?.menuItemOrderType && !item.extras?.availability?.days) {
+                      return <MenuItemMobile key={item._id} id={item._id} />;
+                    } else {
+                      return null;
                     }
                   })}
                 </div>
